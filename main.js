@@ -493,7 +493,8 @@
        ========================================================= */
     const musicBtn = $("#musicBtn"), musicPanel = $("#musicPanel"),
         cd = $("#cdMini"), frame = $("#spotifyFrame"), musicClose = $("#musicClose");
-    const baseSrc = frame ? frame.src : "";
+    // Guarda a URL base sem o autoplay, para não duplicar o parâmetro
+    const baseSrc = frame ? frame.src.replace(/[?&]autoplay=1/g, "") : "";
 
     function setMusic(open) {
         musicPanel.hidden = !open;
@@ -503,6 +504,24 @@
     }
     if (musicBtn) musicBtn.addEventListener("click", () => setMusic(musicPanel.hidden));
     if (musicClose) musicClose.addEventListener("click", () => setMusic(false));
+
+    // Música já liga no carregamento. Como navegadores podem bloquear o autoplay
+    // sem interação, tentamos de novo no primeiro clique/tecla do visitante.
+    const pageStart = Date.now();
+    let musicRetried = false;
+    function retryMusicOnGesture() {
+        if (musicRetried) return;
+        musicRetried = true;
+        if (frame && !musicPanel.hidden && Date.now() - pageStart < 15000) {
+            frame.src = baseSrc + "&autoplay=1";
+        }
+        window.removeEventListener("pointerdown", retryMusicOnGesture);
+        window.removeEventListener("keydown", retryMusicOnGesture);
+        window.removeEventListener("touchstart", retryMusicOnGesture);
+    }
+    window.addEventListener("pointerdown", retryMusicOnGesture);
+    window.addEventListener("keydown", retryMusicOnGesture);
+    window.addEventListener("touchstart", retryMusicOnGesture);
 
     /* =========================================================
        10. COPIAR, TOAST, CONFETE E EASTER EGGS
