@@ -1,18 +1,49 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
-    <!-- Configurações básicas do documento -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus links - Henrique Luiz│Dev</title>
-    <!-- Importação de estilos -->
-    <link rel="stylesheet" href="style.css">
+
+    <!-- SEO -->
+    <title>Henrique Luiz · Dev Front-End & Engenharia de Software — Portfólio 3D</title>
+    <meta name="description"
+        content="Portfólio interativo 3D de Henrique Luiz — estudante de Engenharia de Software na Escola DNC, dev front-end e web designer. Projetos no ar, trilha de estudos e orçamentos de freelancer.">
+    <meta name="author" content="Henrique Luiz Dutra de Lima Varela">
+    <meta name="theme-color" content="#8FE20E">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Henrique Luiz · Portfólio 3D Interativo">
+    <meta property="og:description"
+        content="Cena 3D interativa, skills, trilha da DNC, projetos reais e contato direto.">
+    <meta property="og:image" content="img/IMG_0308.JPG">
+
+    <!-- Tipografia e ícones -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Marca que o JS está ativo (as animações de entrada dependem dele) -->
+    <script>document.documentElement.classList.add("js");</script>
+
+    <!-- Estilos -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Three.js (cena 3D do fundo) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js"
+            }
+        }
+    </script>
 </head>
 
-<body>
-    <!-- Tela de carregamento inicial -->
-    <div id="loading-screen">
+<body data-accent="verde">
+    <!-- ========== TELA DE CARREGAMENTO ========== -->
+    <div id="loading-screen" aria-live="polite">
         <div class="loader-stage">
             <div class="vinyl" aria-hidden="true"><span class="vinyl-hole"></span></div>
             <svg id="smiley" viewBox="0 0 100 100" aria-hidden="true">
@@ -24,110 +55,292 @@
                 <path id="smile-mouth" d="M35 62 Q50 62 65 62" class="mouth" />
             </svg>
             <div id="loading-text">0%</div>
+            <p id="loading-label">montando a cena 3D…</p>
         </div>
         <div id="loading-bar"></div>
     </div>
 
-    <!-- Container principal -->
-    <div class="container">
-        <div class="content">
-            <!-- Widget 1: Informações do usuário -->
-            <div class="widget1">
-                <div class="info-user">
-                    <div class="img-user">
-                        <!-- Foto do perfil -->
-                        <img src="img/IMG_0308.JPG" alt="user">
-                    </div>
-                    <div class="name-user">
-                        <!-- Dados pessoais e profissionais -->
-                        <h1>Henrique Luiz</h1>
-                        <span>Aluno na escola DNC</span>
-                        <span>Cursando(Engenheiro de Software)</span>
-                    </div>
+    <!-- ========== CAMADAS DE FUNDO ========== -->
+    <canvas id="bg3d" aria-hidden="true"></canvas>
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div id="cursor-glow" aria-hidden="true"></div>
+    <div id="scroll-progress" aria-hidden="true"><span></span></div>
+    <div id="tooltip3d" role="status" aria-hidden="true"></div>
+
+    <!-- ========== NAVEGAÇÃO ========== -->
+    <header class="nav" id="nav">
+        <a href="#inicio" class="brand" id="brand" title="Clique para comemorar">
+            <span class="brand-mark">HL</span>
+            <span class="brand-text">Henrique<b>.dev</b></span>
+        </a>
+
+        <nav class="nav-links" id="navLinks" aria-label="Navegação principal">
+            <a href="#sobre">Sobre</a>
+            <a href="#skills">Skills</a>
+            <a href="#trilha">Trilha DNC</a>
+            <a href="#projetos">Projetos</a>
+            <a href="#jornada">Jornada</a>
+            <a href="#contato">Contato</a>
+        </nav>
+
+        <div class="nav-actions">
+            <div class="accents" role="group" aria-label="Cor do tema">
+                <button class="accent-dot is-active" data-accent="verde" style="--c:#8FE20E"
+                    aria-label="Tema verde neon"></button>
+                <button class="accent-dot" data-accent="ciano" style="--c:#22e0ff" aria-label="Tema ciano"></button>
+                <button class="accent-dot" data-accent="magenta" style="--c:#ff4dd8" aria-label="Tema magenta"></button>
+                <button class="accent-dot" data-accent="laranja" style="--c:#ff8a2b" aria-label="Tema laranja"></button>
+            </div>
+            <a class="btn btn-accent btn-sm nav-cta" href="https://wa.me/5511989426415?text=Ol%C3%A1%20Henrique!%20Vim%20pelo%20seu%20portf%C3%B3lio%203D%20e%20quero%20um%20or%C3%A7amento."
+                target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Contratar</a>
+            <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Pontos de seção -->
+    <nav class="dots" id="dots" aria-label="Seções da página"></nav>
+
+    <main>
+        <!-- ========== HERO ========== -->
+        <section class="hero" id="inicio">
+            <div class="hero-inner">
+                <p class="badge reveal"><span class="pulse-dot"></span> Disponível para freelas · resposta em 24h</p>
+
+                <h1 class="hero-name" id="heroName" aria-label="Henrique Luiz">Henrique Luiz</h1>
+
+                <p class="hero-role reveal">
+                    <span class="role-accent">Dev Front-End &amp; Web Designer</span>
+                    <span class="sep">/</span> Engenharia de Software · Escola DNC
+                </p>
+
+                <p class="typewriter reveal"><span id="typed"></span><i class="caret"></i></p>
+
+                <div class="hero-cta reveal">
+                    <a href="#projetos" class="btn btn-accent" data-magnetic>Ver projetos <i
+                            class="fa-solid fa-arrow-down"></i></a>
+                    <a href="https://wa.me/5511989426415?text=Ol%C3%A1%20Henrique!%20Vim%20pelo%20seu%20portf%C3%B3lio%203D%20e%20quero%20um%20or%C3%A7amento."
+                        target="_blank" rel="noopener" class="btn btn-ghost" data-magnetic><i
+                            class="fa-brands fa-whatsapp"></i> Falar agora</a>
+                    <a href="https://rickdigitalestudio.github.io/curr-culo/" target="_blank" rel="noopener"
+                        class="btn btn-ghost" data-magnetic><i class="fa-solid fa-file-arrow-down"></i> Currículo</a>
                 </div>
-                <div class="info-icon">
-                    <img src="img/smile-icon.png" alt="icon">
-                </div>
+
+                <dl class="hero-stats reveal" id="heroStats">
+                    <div><dt data-count="22" data-suffix="">0</dt><dd>repositórios</dd></div>
+                    <div><dt data-count="14" data-suffix="">0</dt><dd>projetos no ar</dd></div>
+                    <div><dt data-count="16" data-suffix="+">0</dt><dd>tecnologias</dd></div>
+                    <div><dt data-count="2" data-suffix=" anos">0</dt><dd>estudando código</dd></div>
+                </dl>
+
+                <p class="hero-hint reveal"><i class="fa-solid fa-hand-pointer"></i> Arraste, gire e clique nas
+                    bolhas 3D do fundo</p>
             </div>
 
-            <!-- Widget 2: Hard Skills -->
-            <div class="widget2">
-                <div class="hard-skills">
-                    <span class="destaque">Hard Skills</span>
-                    <!-- Ícones de tecnologias -->
-                    <div class="skills-icons">
-                        <!-- Lista de ícones de tecnologias dominadas -->
-                        <i class="fab fa-html5"></i>
-                        <i class="fab fa-css3-alt"></i>
-                        <i class="fab fa-js"></i>
-                        <i class="fab fa-bootstrap"></i>
-                        <i class="fab fa-react"></i>
-                        <i class="fab fa-node"></i>
-                        <i class="fab fa-php"></i>
-                        <i class="fab fa-java"></i>
-                        <i class="fab fa-github"></i>
-                        <i class="fab fa-wix"></i>
-                        <i class="fab fa-wordpress"></i>
+            <a href="#sobre" class="scroll-cue" aria-label="Rolar para a seção Sobre">
+                <span></span>
+            </a>
+        </section>
+
+        <!-- ========== SOBRE ========== -->
+        <section class="section" id="sobre" data-title="Sobre">
+            <div class="section-head reveal">
+                <span class="kicker">01 — Sobre</span>
+                <h2>Código, design e <em>movimento</em></h2>
+            </div>
+
+            <div class="about-grid">
+                <div class="photo-card reveal" data-tilt>
+                    <div class="photo-frame">
+                        <img src="img/IMG_0308.JPG" alt="Foto de Henrique Luiz" loading="lazy">
+                        <span class="photo-glow" aria-hidden="true"></span>
+                    </div>
+                    <div class="photo-tags">
+                        <span class="chip-tag"><i class="fa-solid fa-graduation-cap"></i> Engenharia de Software</span>
+                        <span class="chip-tag"><i class="fa-solid fa-location-dot"></i> São Paulo · SP</span>
+                        <span class="chip-tag chip-accent"><i class="fa-solid fa-bolt"></i> Freela aberto</span>
+                    </div>
+                </div>
+
+                <div class="about-copy reveal">
+                    <p class="lead">Sou estudante de <b>Engenharia de Software na DNC</b> e me especializo em
+                        <b>web design</b>: de fanpages rápidas que vendem até sites ultraprofissionais com código
+                        limpo, responsivo e otimizado. Cada repositório do meu GitHub é um degrau nessa jornada.</p>
+                    <p>Hoje meu foco é unir <b>interface + 3D + performance</b> — experiências que fazem o visitante
+                        parar, explorar e chamar no WhatsApp. Do layout ao deploy, no ar e funcionando.</p>
+
+                    <div class="now-panel" id="nowPanel">
+                        <div class="now-row">
+                            <span class="now-label"><i class="fa-regular fa-clock"></i> Agora</span>
+                            <strong id="liveClock">--:--:--</strong>
+                        </div>
+                        <div class="now-row">
+                            <span class="now-label"><i class="fa-solid fa-sun" id="greetIcon"></i> <span
+                                    id="greeting">Bem-vindo</span></span>
+                            <span id="liveDate">—</span>
+                        </div>
+                        <div class="now-row">
+                            <span class="now-label"><i class="fa-brands fa-github"></i> Último push</span>
+                            <span id="lastPush">carregando…</span>
+                        </div>
+                        <div class="now-row">
+                            <span class="now-label"><i class="fa-solid fa-hourglass-half"></i> Nesta página</span>
+                            <span id="sessionTime">00:00</span>
+                        </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            <!-- Widget 3: Materias e Redes Sociais -->
-            <div class="widget3">
-                <!-- Seção de materias/especialidades -->
-                <a href="https://www.instagram.com/escoladnc/" target="_blank" class="tread">
-                    <div class="text-tread">
-                        <h1>Materias</h1>
-                        <span>.Engenheiro de Software</span>
-                        <span>.Desenvolvedor Front End</span>
-                        <span>.Tech Lead</span>
-                        <span>.Arquiteto de Software</span>
+        <!-- ========== SKILLS ========== -->
+        <section class="section" id="skills" data-title="Skills">
+            <div class="section-head reveal">
+                <span class="kicker">02 — Toolkit</span>
+                <h2>Hard skills que uso <em>todo dia</em></h2>
+                <div class="filters" id="skillFilters" role="tablist" aria-label="Filtrar skills"></div>
+            </div>
+
+            <div class="skills-grid" id="skillsGrid"></div>
+
+            <div class="marquee reveal" aria-hidden="true">
+                <div class="marquee-track" id="marqueeTrack"></div>
+            </div>
+        </section>
+
+        <!-- ========== TRILHA DNC ========== -->
+        <section class="section" id="trilha" data-title="Trilha DNC">
+            <div class="section-head reveal">
+                <span class="kicker">03 — Formação</span>
+                <h2>Minha trilha na <em>Escola DNC</em></h2>
+                <p class="section-sub">A DNC é uma escola de cursos livres com projetos práticos no GitHub, tutor por
+                    IA e foco em empregabilidade — não é graduação vinculada ao MEC.</p>
+            </div>
+
+            <div class="trilha-grid" id="trilhaGrid"></div>
+
+            <div class="trilha-note reveal">
+                <div class="note-icon"><i class="fa-solid fa-seedling"></i></div>
+                <div>
+                    <h3>Metodologia: aprender construindo</h3>
+                    <p>Desafios reais entregues no GitHub (consumo de API, interfaces em React, landing pages),
+                        correção com feedback e uma comunidade que roda em cima de casos do mercado.</p>
+                </div>
+                <a class="btn btn-ghost btn-sm" href="https://escoladnc.com.br" target="_blank" rel="noopener">Conhecer
+                    a DNC <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            </div>
+        </section>
+
+        <!-- ========== PROJETOS ========== -->
+        <section class="section" id="projetos" data-title="Projetos">
+            <div class="section-head reveal">
+                <span class="kicker">04 — Trabalhos</span>
+                <h2>Projetos <em>vivos</em> no ar</h2>
+                <div class="filters" id="projectFilters" role="tablist" aria-label="Filtrar projetos"></div>
+            </div>
+
+            <div class="projects-grid" id="projectsGrid"></div>
+
+            <div class="section-foot reveal">
+                <button class="btn btn-ghost" id="loadMore"><i class="fa-brands fa-github"></i> Carregar mais do
+                    GitHub</button>
+                <a class="btn btn-ghost" href="https://github.com/Rickdigitalestudio?tab=repositories"
+                    target="_blank" rel="noopener">Ver perfil completo <i
+                        class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            </div>
+        </section>
+
+        <!-- ========== JORNADA ========== -->
+        <section class="section" id="jornada" data-title="Jornada">
+            <div class="section-head reveal">
+                <span class="kicker">05 — Linha do tempo</span>
+                <h2>A jornada até <em>aqui</em></h2>
+            </div>
+            <ol class="timeline" id="timeline"></ol>
+        </section>
+
+        <!-- ========== CONTATO / SERVIÇOS ========== -->
+        <section class="section" id="contato" data-title="Contato">
+            <div class="section-head reveal">
+                <span class="kicker">06 — Vamos conversar</span>
+                <h2>Do briefing ao site <em>no ar</em></h2>
+            </div>
+
+            <div class="contact-grid">
+                <div class="services reveal">
+                    <h3><i class="fa-solid fa-wand-magic-sparkles"></i> O que eu entrego</h3>
+                    <ul class="service-list" id="serviceList"></ul>
+
+                    <div class="process">
+                        <h4>Meu processo</h4>
+                        <ol id="processList"></ol>
                     </div>
-                    <div class="img-tread"></div>
-                </a>
-                <!-- Links para redes sociais -->
-                <div class="redes-sociais">
-                    <a class="box-social tiktok" href="https://www.tiktok.com/@escoladnc"><i class="fab fa-tiktok"></i></a>
-                    <a class="box-social instagram" href="https://www.instagram.com/escoladnc/"><i class="fab fa-instagram"></i></a>
-                    <a class="box-social github" href="https://github.com/Ricklima991"><i class="fab fa-github"></i></a>
-                    <a class="box-social linkedin" href="https://www.linkedin.com/feed/"><i class="fab fa-linkedin-in"></i></a>
                 </div>
-            </div>
 
-            <!-- Widget 4: Link para portfolio -->
-            <div class="widget4">
-                <a href="https://github.com/Ricklima991" class="meu-site" target="_blank">
-                    <img src="img/web-black-icon.png" alt="web">
-                    <h1>Meu site portfolio</h1>
-                </a>
-            </div>
+                <div class="contact-card reveal" data-tilt>
+                    <span class="contact-badge"><span class="pulse-dot"></span> Agenda aberta · 24h</span>
+                    <h3>Vamos criar algo <em>extraordinário</em>?</h3>
+                    <p>Orçamento em 30 segundos pelo WhatsApp — ou me chame por onde preferir. Sem spam, só
+                        conversa boa.</p>
 
-            <!-- Widget 5: Link para página de freelancer -->
-            <div class="widget5">
-                <a href="https://ricklima991.github.io/profissional-rickdutra/" class="freelancer" target="_blank">
-                    <img src="img/web-white-icon.png" alt="web">
-                    <h1>Freelancer de Sucesso</h1>
-                </a>
-            </div>
-
-            <!-- Widget 6: Player de música Spotify -->
-            <div class="widget6">
-                <div class="music-player">
-                    <div class="cd-mini" id="cdMini" aria-hidden="true"><span></span></div>
-                    <div class="music-info">
-                        <span class="destaque">Foco no trabalho</span>
-                        <small>Lofi beats · Spotify</small>
+                    <div class="contact-actions">
+                        <a class="btn btn-accent btn-block" data-magnetic
+                            href="https://wa.me/5511989426415?text=Ol%C3%A1%20Henrique!%20Vim%20pelo%20seu%20portf%C3%B3lio%203D%20e%20quero%20um%20or%C3%A7amento."
+                            target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> (11) 98942-6415</a>
+                        <button class="btn btn-ghost btn-block" data-copy="estudiorickdigital@gmail.com"><i
+                                class="fa-regular fa-envelope"></i> Copiar e-mail</button>
+                        <a class="btn btn-ghost btn-block" href="mailto:estudiorickdigital@gmail.com"><i
+                                class="fa-solid fa-paper-plane"></i> Abrir no e-mail</a>
                     </div>
-                    <button id="btnPlay" aria-label="Tocar ou pausar música"><i class="fa-solid fa-play"></i></button>
-                </div>
-                <div class="spotify-embed">
-                    <iframe id="spotifyFrame" title="Player Spotify - músicas de foco"
-                        src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
-                        width="100%" height="152" frameborder="0" allowfullscreen=""
-                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                        loading="lazy"></iframe>
+
+                    <div class="contact-socials" id="socials"></div>
                 </div>
             </div>
-    <!-- Script para animação de carregamento -->
-    <script src="animationLoading.js"></script>
+        </section>
+    </main>
+
+    <!-- ========== RODAPÉ ========== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="brand-mark">HL</span>
+                <p><b>Henrique Luiz</b> · Dev Front-End &amp; Engenharia de Software<br>
+                    <small>© <span id="year"></span> — feito com HTML, CSS, JavaScript e Three.js.</small></p>
+            </div>
+            <div class="footer-links">
+                <a href="#inicio">Topo</a>
+                <a href="https://github.com/Rickdigitalestudio" target="_blank" rel="noopener">GitHub</a>
+                <a href="https://escoladnc.com.br" target="_blank" rel="noopener">Escola DNC</a>
+            </div>
+            <div class="footer-clock" id="footerClock">--:--</div>
+        </div>
+    </footer>
+
+    <!-- ========== DOCK DE MÚSICA ========== -->
+    <div class="music-dock" id="musicDock">
+        <div class="music-panel" id="musicPanel" hidden>
+            <div class="music-head">
+                <strong><i class="fa-solid fa-headphones"></i> Foco no trabalho</strong>
+                <button id="musicClose" aria-label="Fechar player"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <iframe id="spotifyFrame" title="Player Spotify - músicas de foco"
+                src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
+                width="100%" height="152" frameborder="0" allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+        </div>
+        <button class="music-btn" id="musicBtn" aria-label="Abrir player de música" aria-expanded="false">
+            <span class="cd-mini" id="cdMini"><span></span></span>
+        </button>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" role="status" aria-live="polite"></div>
+
+    <!-- Conteúdo dinâmico + lógica da interface + cena 3D -->
+    <script src="data.js" defer></script>
+    <script src="main.js" defer></script>
+    <script type="module" src="scene3d.js"></script>
 </body>
+
+</html>
