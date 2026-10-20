@@ -175,8 +175,8 @@ const SITE = {
         },
         {
             title: "Festa das Crianças 2.0",
-            desc: "Landing 3D de evento: flip 3D, mapa do tesouro, confete e contagem regressiva.",
-            cat: "3d", lang: "HTML · CSS · JS", icon: "fa-solid fa-child-reaching",
+            desc: "Landing 3D de evento: cena WebGL, balões explodíveis, olhos que seguem o mouse, mapa do tesouro e sons.",
+            cat: "3d", lang: "HTML · Three.js", icon: "fa-solid fa-child-reaching",
             url: "https://rickdigitalestudio.github.io/festadascriacas2.0guileiros/",
             repo: "https://github.com/Rickdigitalestudio/festadascriacas2.0guileiros"
         },
