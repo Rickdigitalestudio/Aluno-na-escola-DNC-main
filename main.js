@@ -492,36 +492,74 @@
        9. MÚSICA
        ========================================================= */
     const musicBtn = $("#musicBtn"), musicPanel = $("#musicPanel"),
-        cd = $("#cdMini"), frame = $("#spotifyFrame"), musicClose = $("#musicClose");
-    // Guarda a URL base sem o autoplay, para não duplicar o parâmetro
-    const baseSrc = frame ? frame.src.replace(/[?&]autoplay=1/g, "") : "";
+        cd = $("#cdMini"), musicClose = $("#musicClose"), embed = $("#spotifyEmbed");
+    const PLAYLIST_URI = "spotify:playlist:37i9dQZF1DWZeKCadgRdKQ"; // Deep Focus
 
+    // Abrir/fechar o painel NÃO mexe no iframe: só esconde o container.
+    // Assim a música continua tocando ao minimizar o player.
     function setMusic(open) {
         musicPanel.hidden = !open;
         musicBtn.setAttribute("aria-expanded", open);
-        cd.classList.toggle("spinning", open);
-        if (frame) frame.src = open ? baseSrc + "&autoplay=1" : baseSrc;
     }
     if (musicBtn) musicBtn.addEventListener("click", () => setMusic(musicPanel.hidden));
     if (musicClose) musicClose.addEventListener("click", () => setMusic(false));
 
-    // Música já liga no carregamento. Como navegadores podem bloquear o autoplay
-    // sem interação, tentamos de novo no primeiro clique/tecla do visitante.
-    const pageStart = Date.now();
-    let musicRetried = false;
-    function retryMusicOnGesture() {
-        if (musicRetried) return;
-        musicRetried = true;
-        if (frame && !musicPanel.hidden && Date.now() - pageStart < 15000) {
-            frame.src = baseSrc + "&autoplay=1";
-        }
-        window.removeEventListener("pointerdown", retryMusicOnGesture);
-        window.removeEventListener("keydown", retryMusicOnGesture);
-        window.removeEventListener("touchstart", retryMusicOnGesture);
+    // Player via iFrame API oficial do Spotify: dá para dar play/pause
+    // sem recarregar o iframe (recarregar mataria a música).
+    let spotify = null;
+    let musicStarted = false;   // passou a tocar de verdade (evento playback_started)
+    const fallbackFrame = $("#spotifyFrame");
+
+    // O disco gira enquanto a música realmente estiver tocando.
+    function setSpinning(on) {
+        cd.classList.toggle("spinning", !!on);
+        document.body.dataset.music = on ? "playing" : "paused";
     }
-    window.addEventListener("pointerdown", retryMusicOnGesture);
-    window.addEventListener("keydown", retryMusicOnGesture);
-    window.addEventListener("touchstart", retryMusicOnGesture);
+
+    // Autoplay pode ser bloqueado pelo navegador: tentamos de novo no 1º
+    // clique/tecla do visitante (rodava no máximo uma vez).
+    function onGesture() {
+        if (!musicStarted) {
+            if (spotify) {
+                spotify.play();
+            } else if (fallbackFrame && document.contains(fallbackFrame)) {
+                // iFrame API não chegou a carregar (bloqueio/rede):
+                // recarrega o player estático já com autoplay.
+                fallbackFrame.src = fallbackFrame.src;
+            }
+        }
+        window.removeEventListener("pointerdown", onGesture);
+        window.removeEventListener("keydown", onGesture);
+        window.removeEventListener("touchstart", onGesture);
+    }
+    window.addEventListener("pointerdown", onGesture);
+    window.addEventListener("keydown", onGesture);
+    window.addEventListener("touchstart", onGesture);
+
+    window.onSpotifyIframeApiReady = function (IFrameAPI) {
+        if (!embed) return;
+        IFrameAPI.createController(embed, {
+            uri: PLAYLIST_URI,
+            width: "100%",
+            height: 152
+        }, function (controller) {
+            spotify = controller;
+
+            controller.addListener("playback_started", function () {
+                musicStarted = true;
+                setSpinning(true);
+            });
+            controller.addListener("playback_update", function (data) {
+                setSpinning(!data.isPaused);
+            });
+            controller.addListener("error", function () {
+                setSpinning(false);
+            });
+
+            // Toca assim que o player estiver pronto (se o navegador deixar).
+            spotify.play();
+        });
+    };
 
     /* =========================================================
        10. COPIAR, TOAST, CONFETE E EASTER EGGS
