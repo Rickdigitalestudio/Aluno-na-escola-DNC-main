@@ -17,7 +17,7 @@
 | **Sobre** | Foto com efeito de profundidade (tilt), bio e painel "Agora" com relógio, saudação por horário, **último push do GitHub** e tempo de visita. |
 | **Skills** | 18 tecnologias com filtro por área, barras de domínio animadas e marquee. |
 | **Trilha DNC** | As 4 formações (Engenheiro de Software, Front-End, Tech Lead, Arquiteto) + como funciona a metodologia da escola. |
-| **Projetos** | 14 projetos reais, com link "no ar" e repositório, filtros por tipo e botão que **busca mais projetos na API do GitHub**. |
+| **Projetos** | 13 projetos reais, com link "no ar" e repositório, filtros por tipo e botão que **busca mais projetos na API do GitHub**. |
 | **Jornada** | Linha do tempo de 2021 até hoje. |
 | **Contato** | Serviços, processo em 5 passos, WhatsApp, e-mail (copiar com um clique), LinkedIn, TikTok e GitHub. |
 | **Extras** | Troca de cor do tema (afeta também a cena 3D), player de música, confete no logo, relógio no rodapé. |

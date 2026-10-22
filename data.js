@@ -153,13 +153,6 @@ const SITE = {
             repo: "https://github.com/Rickdigitalestudio/viverdefreelancer"
         },
         {
-            title: "New Vila Ema",
-            desc: "Landing premium de imóveis com terraço, mapa e foco em conversão de visitantes.",
-            cat: "landing", lang: "TypeScript", icon: "fa-solid fa-house-chimney",
-            url: "https://rickdigitalestudio.github.io/vila-ema-living/",
-            repo: "https://github.com/Rickdigitalestudio/vila-ema-living"
-        },
-        {
             title: "Pousada do Adão",
             desc: "Site institucional com suítes, cardápio e reservas — clima de férias desde a primeira tela.",
             cat: "produto", lang: "HTML · CSS", icon: "fa-solid fa-umbrella-beach",
@@ -246,7 +239,7 @@ const SITE = {
         {
             year: "2026",
             title: "Estúdio Rick Digital",
-            text: "Estruturo o estúdio: 14 projetos publicados, serviços de web design e projetos 3D com Three.js.",
+            text: "Estruturo o estúdio: 13 projetos publicados, serviços de web design e projetos 3D com Three.js.",
             icon: "fa-solid fa-wand-magic-sparkles", now: true
         }
     ],
